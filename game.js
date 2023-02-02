@@ -6,6 +6,8 @@ const btnRight = document.querySelector("#right");
 const btnDown = document.querySelector("#down");
 const spanLives = document.querySelector("#lives");
 const spanTime = document.querySelector("#time");
+const spanRecord = document.querySelector("#record");
+const pResult = document.querySelector("#result");
 
 let canvasSize;
 let elementsSize;
@@ -58,6 +60,7 @@ function startGame() {
   if (!timeStart) {
     timeStart = Date.now();
     timeInterval = setInterval(showTime, 100);
+    showRecord();
   }
 
   const mapRows = map.trim().split("\n");
@@ -136,6 +139,10 @@ function showTime() {
   spanTime.innerHTML = Date.now() - timeStart;
 }
 
+function showRecord() {
+  spanRecord.innerHTML = localStorage.getItem("record_time");
+}
+
 function levelFail() {
   lives--;
 
@@ -153,6 +160,22 @@ function levelFail() {
 function gameWin() {
   console.log("Ganaste");
   clearInterval(timeInterval);
+
+  const recordTime = localStorage.getItem("record_time");
+  const playerTime = Date.now() - timeStart;
+
+  if (recordTime) {
+    if (recordTime >= playerTime) {
+      localStorage.setItem("record_time", playerTime);
+      pResult.innerHTML = "Superaste el record";
+    } else {
+      console.log("No superaste el record");
+      pResult.innerHTML = "Lo siento, no superaste el record";
+    }
+  } else {
+    localStorage.setItem("record_time", playerTime);
+    pResult.innerHTML = "Primera vez? intenta superar este tiempo";
+  }
 }
 
 window.addEventListener("keydown", moveByKeys);
